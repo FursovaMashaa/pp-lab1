@@ -5,37 +5,44 @@ import shutil
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 
 
 def creating_a_folders(name: str) -> None:
     if not os.path.isdir(name):
-         os.mkdir(name)
-         print("Папка создана")
+        os.mkdir(name)
+        print("Папка создана")
     else:
         print("Папка уже существует")
 
-'''
 
-def get_hyperlinks(query, folder_name):
-    driver = webdriver.Chrome(service=ChromeService(executable_path=ChromeDriverManager().install()))
+
+def get_hyperlinks(query:str, quantity:int) -> None:
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
     time.sleep(2) 
-    url = f"https://yandex.ru/images/search?text={query}&isize=eq&iw=1920&ih=1080"
-    driver.get(url)
+    url = f"https://yandex.ru/images/search?text={query}"
+    driver.get(url=url)
     time.sleep(3)
-    view_all_button = driver.find_element_by_css_selector(".cl-teaser__button")
+    driver.maximize_window()
+    time.sleep(10)
+    view_all_button = driver.find_element(By.CSS_SELECTOR, "a.Link.SimpleImage-Cover")
     view_all_button.click()
-    with open(f"{folder_name}/{query}.txt", "w") as f:
-        time.sleep(2)
-        images = driver.find_elements_by_css_selector(".serp-item__link")
-        for i, image in enumerate(images):
-            if i >= 1000:
-                break
-            link = image.get_attribute("href")
-            f.write(f"{link}\n")
-            image.click()
-            time.sleep(2)
+    
+    with open(f"urls_{query}.txt", "w") as file:
+        for i in range(quantity):
+            try:
+                time.sleep(2)
+                link = driver.find_element(By.CSS_SELECTOR, "a.Button2_view_action").get_attribute("href")
+                file.write(link + "\n")
+                driver.find_element(By.CSS_SELECTOR, "div.CircleButton:nth-child(4)").click()
+            except:
+                continue
+    driver.close()
     driver.quit()
+    print("Все норм")
+    
 
+'''
 def download_img(folder_name, query):
     with open(f"{folder_name}/{query}.txt", "r") as f: 
         creating_a_folders(f"{folder_name}/images")
@@ -53,6 +60,8 @@ def download_img(folder_name, query):
 
 def main() -> None:
     creating_a_folders("dataset")
+    request = "cat"
+    get_hyperlinks(request, 10)
 
 if __name__ == "__main__":
     main()
