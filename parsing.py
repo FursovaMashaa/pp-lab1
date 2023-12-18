@@ -28,10 +28,10 @@ def get_hyperlinks(query:str, quantity:int) -> None:
     view_all_button = driver.find_element(By.CSS_SELECTOR, "a.Link.SimpleImage-Cover")
     view_all_button.click()
     
-    with open(f"urls_{query}.txt", "w") as file:
+    with open(f"{query}.txt", "w") as file:
         for i in range(quantity):
             try:
-                time.sleep(2)
+                time.sleep(1)
                 link = driver.find_element(By.CSS_SELECTOR, "a.Button2_view_action").get_attribute("href")
                 file.write(link + "\n")
                 driver.find_element(By.CSS_SELECTOR, "div.CircleButton:nth-child(4)").click()
@@ -42,26 +42,41 @@ def get_hyperlinks(query:str, quantity:int) -> None:
     print("Все норм")
     
 
-'''
-def download_img(folder_name, query):
-    with open(f"{folder_name}/{query}.txt", "r") as f: 
-        creating_a_folders(f"{folder_name}/images")
-        for i, line in enumerate(f):
-            if i >= 1000:
-                break
-            url = line.strip()
-            response = requests.get(url)
-            if response.status_code == 200:
-                with open(f"{folder_name}/images/{query}_{i:04d}.jpg", "wb") as img_file:
-                    img_file.write(response.content)
-'''
+
+def download_images(query:str) -> None:
+    creating_a_folders(f"dataset/{query}")
+    img_count=0
+    
+    with open(f"{query}.txt", "r") as file: 
+        for line in file:
+            try:
+                url = line.strip()
+                time.sleep(5)
+                response = query.get(url, stream=True)
+                if response.status_code == 200:
+                    img_count += 1
+                    with open(os.join.path("dataset", f"{query}", f"{str[img_count].zfill(4)}.jpg"), "wb") as image_file:
+                        shutil.copyfileobj(response.raw, image_file)
+                else:
+                    continue    
+            except:
+                continue
+    print(f'{img_count} successfully downloaded')
+
+
 
 
 
 def main() -> None:
     creating_a_folders("dataset")
+    
     request = "cat"
-    get_hyperlinks(request, 10)
+    get_hyperlinks(request, 3)
+    download_images(request)
+
+    request = "dog"
+    get_hyperlinks(request, 3)
+    download_images(request)
 
 if __name__ == "__main__":
     main()
