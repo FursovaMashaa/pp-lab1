@@ -1,14 +1,20 @@
 import os
 import requests
 import time
+import shutil
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def creating_a_folders(name):
+def creating_a_folders(name: str) -> None:
     if not os.path.isdir(name):
          os.mkdir(name)
+         print("Папка создана")
+    else:
+        print("Папка уже существует")
+
+'''
 
 def get_hyperlinks(query, folder_name):
     driver = webdriver.Chrome(service=ChromeService(executable_path=ChromeDriverManager().install()))
@@ -28,8 +34,6 @@ def get_hyperlinks(query, folder_name):
             f.write(f"{link}\n")
             image.click()
             time.sleep(2)
-    
-    
     driver.quit()
 
 def download_img(folder_name, query):
@@ -43,19 +47,15 @@ def download_img(folder_name, query):
             if response.status_code == 200:
                 with open(f"{folder_name}/images/{query}_{i:04d}.jpg", "wb") as img_file:
                     img_file.write(response.content)
+'''
 
-def main():
-    
-    if os.path.exists("dataset"):
-        for file_name in os.listdir("dataset"):
-            os.remove(f"dataset/{file_name}")
-        os.rmdir("dataset")
-    
+
+
+def main() -> None:
     creating_a_folders("dataset")
-    get_hyperlinks("cat", "dataset")
-    time.sleep(5)
-    download_img("dataset", "cat")
-    get_hyperlinks("dog", "dataset")
-    time.sleep(5)
-    download_img("dataset", "dog")
-    time.sleep(15)
+
+if __name__ == "__main__":
+    main()
+    
+    
+    
