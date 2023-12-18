@@ -44,21 +44,24 @@ def get_hyperlinks(query:str, quantity:int) -> None:
 
 
 def download_images(query:str) -> None:
-    creating_a_folders(f"dataset/{query}")
+    
     img_count=0
     
-    with open(f"{query}.txt", "r") as file: 
+    creating_a_folders("dataset")
+    creating_a_folders(os.path.join("dataset", f"{query}"))
+
+    with open(f"{query}.txt", "r") as file:
         for line in file:
             try:
                 url = line.strip()
                 time.sleep(5)
-                response = query.get(url, stream=True)
+                response = requests.get(url, stream=True)
                 if response.status_code == 200:
                     img_count += 1
-                    with open(os.join.path("dataset", f"{query}", f"{str[img_count].zfill(4)}.jpg"), "wb") as image_file:
+                    with open(os.path.join("dataset", f"{query}", f"{str(img_count).zfill(4)}.jpg"), "wb") as image_file:
                         shutil.copyfileobj(response.raw, image_file)
                 else:
-                    continue    
+                    continue
             except:
                 continue
     print(f'{img_count} successfully downloaded')
@@ -68,15 +71,18 @@ def download_images(query:str) -> None:
 
 
 def main() -> None:
-    creating_a_folders("dataset")
+    if os.path.isdir("dataset"):
+        shutil.rmtree("dataset")
     
-    request = "cat"
-    get_hyperlinks(request, 3)
-    download_images(request)
+    
+    query = "cat"
+    get_hyperlinks(query , 3)
+    download_images(query )
+    time.sleep(5)
 
-    request = "dog"
-    get_hyperlinks(request, 3)
-    download_images(request)
+    query  = "dog"
+    get_hyperlinks(query , 3)
+    download_images(query )
 
 if __name__ == "__main__":
     main()
