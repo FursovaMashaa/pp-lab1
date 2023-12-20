@@ -2,6 +2,7 @@ import os
 import requests
 import time
 import shutil
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -22,9 +23,8 @@ def get_hyperlinks(query:str, quantity:int) -> None:
     time.sleep(2) 
     url = f"https://yandex.ru/images/search?text={query}"
     driver.get(url=url)
-    time.sleep(3)
     driver.maximize_window()
-    time.sleep(10)
+    time.sleep(5)
     view_all_button = driver.find_element(By.CSS_SELECTOR, "a.Link.SimpleImage-Cover")
     view_all_button.click()
     
@@ -54,7 +54,7 @@ def download_images(query:str) -> None:
         for line in file:
             try:
                 url = line.strip()
-                time.sleep(5)
+                time.sleep(4)
                 response = requests.get(url, stream=True)
                 if response.status_code == 200:
                     img_count += 1
@@ -74,18 +74,15 @@ def main() -> None:
     if os.path.isdir("dataset"):
         shutil.rmtree("dataset")
     
-    
     query = "cat"
-    get_hyperlinks(query , 3)
+    get_hyperlinks(query , 1150)
     download_images(query )
-    time.sleep(5)
+    
 
     query  = "dog"
-    get_hyperlinks(query , 3)
+    get_hyperlinks(query , 1150)
     download_images(query )
 
-if __name__ == "__main__":
-    main()
     
     
     
